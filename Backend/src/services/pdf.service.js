@@ -10,7 +10,10 @@ let browserPromise = null
 function getBrowser() {
     if (!browserPromise) {
         browserPromise = puppeteer.launch({
-            args: [ "--disable-dev-shm-usage" ]
+            args: [
+                "--disable-dev-shm-usage",
+                ...(config.chromeNoSandbox ? [ "--no-sandbox", "--disable-setuid-sandbox" ] : [])
+            ]
         }).then((browser) => {
             browser.on("disconnected", () => { browserPromise = null })
             return browser

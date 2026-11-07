@@ -13,6 +13,9 @@ Backend/demo-account.json
 dist/
 build/
 
+# Chrome downloaded by Puppeteer (see Backend/.puppeteerrc.cjs)
+.cache/
+
 # Logs and OS/editor files
 *.log
 npm-debug.log*

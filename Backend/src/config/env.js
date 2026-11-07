@@ -39,6 +39,9 @@ function loadConfig(env = process.env) {
         // Set to "true" when the frontend and backend are on different domains (e.g. two
         // hosting providers). The login cookie is then sent cross-site, which requires HTTPS.
         crossSiteCookie: env.CROSS_SITE_COOKIE === "true",
+        // Set to "true" on hosts where Chrome can't start its sandbox (common on cloud servers
+        // and containers). The PDF page already has JavaScript and network access turned off.
+        chromeNoSandbox: env.CHROME_NO_SANDBOX === "true",
     })
 }
 
