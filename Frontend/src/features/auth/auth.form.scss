@@ -1,0 +1,153 @@
+@use "../../style/theme" as *;
+
+.auth {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    &__side {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 2.5rem 3rem;
+        background-color: $ink;
+        color: $paper;
+
+        .wordmark {
+            color: $paper;
+        }
+
+        .mono-label {
+            color: $ink-faint;
+        }
+    }
+
+    &__line {
+        font-family: $sans;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: clamp(2rem, 3.6vw, 3.25rem);
+        line-height: 1.12;
+
+        em {
+            color: #e8774f;
+        }
+    }
+
+    &__panel {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 3rem 1.5rem;
+    }
+
+    &__form {
+        width: 100%;
+        max-width: 380px;
+
+        h1 {
+            font-family: $sans;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            font-size: 2.1rem;
+            line-height: 1.15;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .error-message {
+            margin-top: 1.5rem;
+        }
+
+        .button {
+            align-self: flex-start;
+            margin-top: 0.5rem;
+        }
+    }
+
+    &__mobile-mark {
+        display: none !important;
+    }
+
+    &__subtitle {
+        margin-top: 0.6rem;
+        color: $ink-soft;
+    }
+
+    &__switch {
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid $rule;
+        font-size: 0.9rem;
+        color: $ink-soft;
+    }
+}
+
+// Underlined fields, like writing on a form
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+
+    label {
+        font-family: $sans;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: $ink-soft;
+    }
+
+    input {
+        width: 100%;
+        padding: 0.5rem 0 0.6rem;
+        background: transparent;
+        border: none;
+        border-bottom: 1px solid $ink-faint;
+        border-radius: 0;
+        color: $ink;
+        font-family: $sans;
+        font-size: 1.05rem;
+        outline: none;
+        transition: border-color 0.2s;
+
+        &::placeholder {
+            color: $ink-faint;
+            opacity: 0.7;
+        }
+
+        &:focus {
+            border-bottom-color: $accent;
+            box-shadow: 0 1px 0 0 $accent;
+        }
+    }
+
+    &__hint {
+        font-size: 0.78rem;
+        color: $ink-faint;
+    }
+}
+
+@media (max-width: 860px) {
+    .auth {
+        grid-template-columns: 1fr;
+
+        &__side {
+            display: none;
+        }
+
+        &__panel {
+            align-items: flex-start;
+            padding-top: 2rem;
+        }
+
+        &__mobile-mark {
+            display: inline-flex !important;
+            margin-bottom: 3rem;
+        }
+    }
+}

@@ -1,0 +1,243 @@
+@use "./style/theme" as *;
+@use "./style/button.scss";
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    background-color: $paper;
+    color: $ink;
+    font-family: $sans;
+    font-size: 16px;
+    line-height: 1.55;
+}
+
+// Faint paper grain over everything. Purely decorative.
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.35;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.11 0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+#root {
+    min-height: 100vh;
+}
+
+::selection {
+    background-color: $accent;
+    color: $paper;
+}
+
+:focus-visible {
+    outline: 2px solid $accent;
+    outline-offset: 3px;
+}
+
+h1, h2, h3 {
+    font-weight: 700;
+}
+
+em {
+    font-style: normal;
+}
+
+.container {
+    width: 100%;
+    max-width: $page-width;
+    margin: 0 auto;
+    padding-inline: 1.5rem;
+}
+
+.mono-label {
+    font-family: $sans;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $ink-soft;
+}
+
+// Wordmark: serif name with a small mono "AI"
+.wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0;
+    font-family: $sans;
+    font-weight: 800;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    font-size: 1.15rem;
+    line-height: 1;
+    color: $ink;
+    text-decoration: none;
+
+    span {
+        font-family: $sans;
+        font-variant-numeric: tabular-nums;
+        font-size: inherit;
+        font-weight: 700;
+        color: $accent;
+    }
+}
+
+.error-message {
+    padding: 0.75rem 1rem;
+    border-left: 3px solid $accent;
+    background-color: $accent-wash;
+    color: #8a2a10;
+    font-size: 0.9rem;
+    line-height: 1.45;
+}
+
+// Text boxes on raised paper
+.paper-input {
+    width: 100%;
+    padding: 1rem 1.1rem;
+    background-color: $paper-raised;
+    border: 1px solid $rule;
+    border-radius: 2px;
+    color: $ink;
+    font-family: $sans;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &::placeholder {
+        color: $ink-faint;
+    }
+
+    &:focus {
+        border-color: $ink;
+        box-shadow: 3px 3px 0 0 $ink;
+    }
+}
+
+.score-text {
+    &--high { color: $good; }
+    &--mid  { color: $warn; }
+    &--low  { color: $bad; }
+}
+
+// Severity marker: coloured dot + label
+.level {
+    flex-shrink: 0;
+    text-transform: capitalize;
+    font-family: $sans;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    &::before {
+        content: "";
+        display: inline-block;
+        width: 0.45rem;
+        height: 0.45rem;
+        margin-right: 0.45rem;
+        border-radius: 50%;
+        background-color: currentColor;
+        vertical-align: 0.05rem;
+    }
+
+    &--high   { color: $bad; }
+    &--medium { color: $warn; }
+    &--low    { color: $good; }
+}
+
+// ── App header (logged-in pages) ─────────────────────────────────────────────
+.app-header {
+    border-bottom: 1px solid $rule;
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4rem;
+    }
+
+    &__nav {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+}
+
+// ── Loading ──────────────────────────────────────────────────────────────────
+.loading-screen {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.ink-line {
+    position: relative;
+    width: 7rem;
+    height: 1px;
+    overflow: hidden;
+    background-color: $rule;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        width: 40%;
+        background-color: $ink;
+        animation: ink-slide 1.4s ease-in-out infinite;
+    }
+}
+
+@keyframes ink-slide {
+    from { transform: translateX(-100%); }
+    to   { transform: translateX(260%); }
+}
+
+.spinner--small {
+    display: inline-block;
+    width: 0.9rem;
+    height: 0.9rem;
+    border: 1.5px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .container {
+        padding-inline: 1rem;
+    }
+
+    .app-header__user {
+        display: none;
+    }
+}

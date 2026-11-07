@@ -1,0 +1,217 @@
+@use "../../../style/theme" as *;
+
+.workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: 5rem;
+    padding-top: 3.5rem;
+    padding-bottom: 6rem;
+}
+
+// ── The form ─────────────────────────────────────────────────────────────────
+.compose {
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+
+    &__intro h1 {
+        margin-top: 0.75rem;
+        font-family: $sans;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: clamp(2rem, 4.5vw, 3rem);
+        line-height: 1.1;
+
+        em {
+            color: $accent;
+        }
+    }
+
+    &__submit {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1.25rem;
+    }
+
+    &__note {
+        font-size: 0.875rem;
+        color: $ink-faint;
+    }
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    &__label {
+        display: flex;
+        align-items: baseline;
+        gap: 0.75rem;
+        font-family: $sans;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: 1.2rem;
+        line-height: 1.25;
+    }
+
+    &__num {
+        color: $accent;
+    }
+
+    &__help {
+        margin-top: -0.35rem;
+        color: $ink-soft;
+        font-size: 0.95rem;
+    }
+
+    &__meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 0.8rem;
+        color: $ink-faint;
+
+        span:last-child {
+            font-family: $sans;
+            font-variant-numeric: tabular-nums;
+        }
+    }
+
+    &__error {
+        font-size: 0.85rem;
+        color: $accent;
+    }
+}
+
+
+.dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1.75rem 1rem;
+    border: 1px dashed $ink-faint;
+    border-radius: 2px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+
+    &__title {
+        font-size: 0.98rem;
+    }
+
+    &:hover,
+    &.is-dragging {
+        border-color: $accent;
+        background-color: $accent-wash;
+    }
+}
+
+.file-chip {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    background-color: $paper-raised;
+    border: 1px solid $ink;
+    border-radius: 2px;
+
+    &__name {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 500;
+    }
+
+    &__size {
+        font-family: $sans;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.75rem;
+        color: $ink-faint;
+    }
+}
+
+// ── Saved plans, like a table of contents ────────────────────────────────────
+.plans {
+    align-self: start;
+    position: sticky;
+    top: 2rem;
+
+    h2 {
+        padding-bottom: 0.9rem;
+        border-bottom: 1px solid $ink;
+    }
+
+    &__empty {
+        padding-top: 1.25rem;
+        color: $ink-soft;
+        line-height: 1.6;
+
+        em {
+            display: block;
+            font-family: $sans;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            font-size: 1.05rem;
+            color: $ink;
+        }
+    }
+
+    &__list {
+        list-style: none;
+    }
+
+    &__row {
+        display: flex;
+        flex-direction: column;
+        gap: 0.3rem;
+        padding: 1.1rem 0;
+        border-bottom: 1px solid $rule;
+        color: $ink;
+        text-decoration: none;
+        transition: padding-left 0.25s ease;
+
+        &:hover {
+            padding-left: 0.6rem;
+
+            .plans__title {
+                color: $accent;
+            }
+        }
+    }
+
+    &__title {
+        font-family: $sans;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        font-size: 1.05rem;
+        line-height: 1.35;
+        transition: color 0.2s;
+    }
+
+    &__meta {
+        display: flex;
+        justify-content: space-between;
+        font-family: $sans;
+        font-variant-numeric: tabular-nums;
+        font-size: 0.75rem;
+        color: $ink-faint;
+    }
+}
+
+
+@media (max-width: 900px) {
+    .workspace {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+        padding-top: 2.5rem;
+    }
+
+    .plans {
+        position: static;
+    }
+}
