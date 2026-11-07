@@ -1,11 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
 import { Link, useNavigate } from 'react-router'
 import AppHeader from '../../../components/AppHeader'
 import GeneratingScreen from '../../../components/GeneratingScreen'
 import { scoreBand } from '../../../lib/score'
-import { loadDraft, clearDraft } from '../../../lib/draft'
 
 const MAX_RESUME_BYTES = 3 * 1024 * 1024
 
@@ -20,9 +19,8 @@ function formatDate(value) {
 const Home = () => {
 
     const { error, generateReport, reports } = useInterview()
-    // Pick up anything pasted on the landing page before signing up
-    const [ jobDescription, setJobDescription ] = useState(() => loadDraft()?.jobDescription || "")
-    const [ selfDescription, setSelfDescription ] = useState(() => loadDraft()?.selfDescription || "")
+    const [ jobDescription, setJobDescription ] = useState("")
+    const [ selfDescription, setSelfDescription ] = useState("")
     const [ resumeFile, setResumeFile ] = useState(null)
     const [ fileError, setFileError ] = useState("")
     const [ dragging, setDragging ] = useState(false)
@@ -30,8 +28,6 @@ const Home = () => {
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
-
-    useEffect(() => { clearDraft() }, [])
 
     const pickFile = (file) => {
         setFileError("")

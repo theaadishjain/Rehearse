@@ -30,9 +30,10 @@ function publicUser(user) {
 async function registerUserController(req, res) {
     const { username, email, password } = req.body
 
+    // Case-insensitive, so "Aadish" and "aadish" can't be two different accounts
     const isUserAlreadyExists = await userModel.exists({
         $or: [ { username }, { email } ]
-    })
+    }).collation({ locale: "en", strength: 2 })
 
     if (isUserAlreadyExists) {
         throw new AppError(409, "Account already exists with this email address or username.")

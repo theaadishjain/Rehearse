@@ -4,6 +4,7 @@ const { zodToJsonSchema } = require("zod-to-json-schema")
 const config = require("../config/env")
 const AppError = require("../utils/AppError")
 const { htmlToPdf } = require("./pdf.service")
+const cleanReport = require("../utils/cleanReport")
 
 const ai = new GoogleGenAI({
     apiKey: config.geminiApiKey
@@ -102,8 +103,7 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
         schema: interviewReportSchema
     })
 
-    report.matchScore = Math.min(100, Math.max(0, Math.round(report.matchScore)))
-    return report
+    return cleanReport(report)
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {

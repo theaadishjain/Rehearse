@@ -15,9 +15,9 @@ const interviewRouter = express.Router()
  */
 interviewRouter.post("/",
     authMiddleware.authUser,
-    generatePerUser,
     upload.single("resume"),
     validateBody(generateReportSchema),
+    generatePerUser, // after validation, so a form mistake doesn't use up the user's hourly limit
     interviewController.generateInterViewReportController)
 
 /**
@@ -44,8 +44,8 @@ interviewRouter.get("/", authMiddleware.authUser, interviewController.getAllInte
  */
 interviewRouter.post("/resume/pdf/:interviewReportId",
     authMiddleware.authUser,
-    generatePerUser,
     validateObjectIdParam("interviewReportId"),
+    generatePerUser,
     interviewController.generateResumePdfController)
 
 module.exports = interviewRouter

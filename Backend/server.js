@@ -16,7 +16,9 @@ async function start() {
     try {
         await connectToDB(config.mongoUri)
     } catch (err) {
-        console.error(`Could not connect to MongoDB at ${config.mongoUri}: ${err.message}`)
+        // Hide the username and password so they never end up in the logs
+        const safeUri = config.mongoUri.replace(/\/\/[^@/]*@/, "//***@")
+        console.error(`Could not connect to MongoDB at ${safeUri}: ${err.message}`)
         process.exit(1)
     }
 

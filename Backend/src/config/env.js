@@ -27,7 +27,8 @@ function loadConfig(env = process.env) {
         jwtExpiresInSeconds: 24 * 60 * 60,
         geminiApiKey: env.GOOGLE_GENAI_API_KEY,
         geminiModel: env.GEMINI_MODEL || "gemini-3.8-flash",
-        clientUrl: env.CLIENT_URL || "http://localhost:5173",
+        // Browsers send the origin without a trailing slash, so strip one if it was pasted in
+        clientUrl: (env.CLIENT_URL || "http://localhost:5173").trim().replace(/\/+$/, ""),
         pdfConcurrency: Math.max(1, Number(env.PDF_CONCURRENCY) || 2),
         // Rate limits (each counts requests in memory, per server process)
         loginFailuresPer15Min: Number(env.LOGIN_FAILURES_PER_15_MIN) || 5,

@@ -22,7 +22,7 @@ export async function getErrorMessage(err, fallback = "Something went wrong. Ple
         return data?.message || fallback
     }
     if (err?.request) {
-        return "Can't reach the server. Make sure the backend is running."
+        return "Can't reach the server. Check your internet connection and try again."
     }
     return fallback
 }

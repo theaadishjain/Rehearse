@@ -66,7 +66,8 @@ const Interview = () => {
         )
     }
 
-    if (loading || !report) {
+    // report can still hold the plan opened before this one until the new one arrives
+    if (loading || !report || report._id !== interviewId) {
         return <Loader message='Opening your plan' />
     }
 
@@ -119,7 +120,7 @@ const Interview = () => {
 
                     {tab === 'plan' ? (
                         <ol className='days'>
-                            {report.preparationPlan.map((day) => <PlanDay key={day.day} day={day} />)}
+                            {report.preparationPlan.map((day, i) => <PlanDay key={i} day={day} />)}
                         </ol>
                     ) : (
                         <ol className='questions' key={tab}>

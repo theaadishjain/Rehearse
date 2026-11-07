@@ -118,6 +118,12 @@ describe("auth: cookie and session handling (problem 2)", () => {
         assert.equal(res.status, 409)
     })
 
+    test("usernames are unique regardless of upper and lower case", async () => {
+        const res = await request(app).post("/api/auth/register")
+            .send({ ...newUser("COOKIEUSER"), email: "someone-else@example.com" })
+        assert.equal(res.status, 409)
+    })
+
     test("wrong password is a 401, correct one logs in", async () => {
         const bad = await request(app).post("/api/auth/login")
             .send({ email: "cookieuser@example.com", password: "wrong-password" })
@@ -293,6 +299,16 @@ describe("rate limits", () => {
         await registeredAgent("innocent")
         const other = await attempt("innocent@example.com", "correct-horse-1")
         assert.equal(other.status, 200, other.text)
+    })
+
+    test("form mistakes don't use up the generate limit", async () => {
+        const agent = await registeredAgent("typouser")
+        for (let i = 0; i < 10; i++) {
+            const res = await agent.post("/api/interview/").field("jobDescription", "too short").field("selfDescription", "Node dev")
+            assert.equal(res.status, 400)
+        }
+        const res = await agent.post("/api/interview/").field("jobDescription", JOB).field("selfDescription", "Node dev")
+        assert.equal(res.status, 201, res.text)
     })
 
     test("logged-in users are limited when generating (8 per hour in tests)", async () => {
