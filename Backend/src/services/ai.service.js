@@ -31,11 +31,6 @@ const interviewReportSchema = z.object({
     title: z.string().describe("The title of the job for which the interview report is generated"),
 })
 
-const previewSchema = z.object({
-    title: z.string().describe("The title of the job"),
-    questions: z.array(questionSchema).describe("Exactly 3 of the most likely interview questions for this job")
-})
-
 const resumePdfSchema = z.object({
     html: z.string().describe("The complete, self-contained HTML document of the resume, with all CSS inline in a <style> tag")
 })
@@ -111,27 +106,6 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
     return report
 }
 
-/**
- * A short sample for visitors who haven't signed up: the job title and three questions.
- */
-async function generateInterviewPreview({ selfDescription, jobDescription }) {
-    const preview = await generateStructured({
-        systemInstruction: `You are an experienced technical recruiter and interview coach. ${UNTRUSTED_INPUT_RULES}`,
-        prompt: `Give the 3 interview questions this candidate is most likely to be asked for this job: two about the skills
-the role needs and one behavioral question. For each, explain why the interviewer asks it and how to answer it well.
-If no self description is given, base everything on the job description alone.
-
-${candidateContext({ resume: "", selfDescription, jobDescription })}`,
-        schema: previewSchema
-    })
-
-    if (preview.questions.length === 0) {
-        throw new AppError(502, "The AI returned an incomplete answer. Please try again.")
-    }
-    preview.questions = preview.questions.slice(0, 3)
-    return preview
-}
-
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
     const { html } = await generateStructured({
         systemInstruction: `You are an expert resume writer. ${UNTRUSTED_INPUT_RULES}`,
@@ -153,4 +127,4 @@ Requirements:
     return htmlToPdf(html)
 }
 
-module.exports = { generateInterviewReport, generateInterviewPreview, generateResumePdf }
+module.exports = { generateInterviewReport, generateResumePdf }

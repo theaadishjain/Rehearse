@@ -1,6 +1,6 @@
 import { getAllInterviewReports, generateInterviewReport, getInterviewReportById, generateResumePdf } from "../services/interview.api"
 import { useContext, useEffect, useState } from "react"
-import { InterviewContext } from "../interview.context"
+import { InterviewContext } from "../interviewContext"
 import { useParams } from "react-router"
 import { getErrorMessage } from "../../../lib/api"
 
@@ -85,13 +85,30 @@ export const useInterview = () => {
         }
     }
 
+    // Load the report (or the list) for the current page. If the user moves to another
+    // report before this one arrives, the older response is ignored so it can't overwrite it.
     useEffect(() => {
-        if (interviewId) {
-            getReportById(interviewId)
-        } else {
-            getReports()
-        }
-    }, [ interviewId ])
+        let ignore = false
+        setLoading(true)
+        setError("")
+
+        const request = interviewId
+            ? getInterviewReportById(interviewId).then((res) => { if (!ignore) setReport(res.interviewReport) })
+            : getAllInterviewReports().then((res) => { if (!ignore) setReports(res.interviewReports) })
+
+        request
+            .catch(async (err) => {
+                const message = await getErrorMessage(err, interviewId
+                    ? "Could not load this interview plan."
+                    : "Could not load your previous interview plans.")
+                if (ignore) return
+                if (interviewId) setReport(null)
+                setError(message)
+            })
+            .finally(() => { if (!ignore) setLoading(false) })
+
+        return () => { ignore = true }
+    }, [ interviewId, setLoading, setError, setReport, setReports ])
 
     return { loading, downloading, error, report, reports, generateReport, getReportById, getReports, getResumePdf }
 

@@ -1,5 +1,5 @@
 const { PDFParse } = require("pdf-parse")
-const { generateInterviewReport, generateInterviewPreview, generateResumePdf } = require("../services/ai.service")
+const { generateInterviewReport, generateResumePdf } = require("../services/ai.service")
 const interviewReportModel = require("../models/interviewReport.model")
 const AppError = require("../utils/AppError")
 
@@ -60,21 +60,6 @@ async function generateInterViewReportController(req, res) {
 }
 
 /**
- * @description Public preview for visitors: three likely questions for a job description.
- * Nothing is stored.
- */
-async function previewInterviewController(req, res) {
-    const { jobDescription, selfDescription } = req.body
-
-    const preview = await generateInterviewPreview({ jobDescription, selfDescription })
-
-    res.status(200).json({
-        message: "Preview generated successfully.",
-        preview
-    })
-}
-
-/**
  * @description Controller to get interview report by interviewId.
  */
 async function getInterviewReportByIdController(req, res) {
@@ -131,4 +116,4 @@ async function generateResumePdfController(req, res) {
     res.send(pdfBuffer)
 }
 
-module.exports = { generateInterViewReportController, previewInterviewController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController }
+module.exports = { generateInterViewReportController, getInterviewReportByIdController, getAllInterviewReportsController, generateResumePdfController }

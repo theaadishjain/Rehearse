@@ -7,7 +7,8 @@ process.env.JWT_SECRET = "test-secret-for-automated-tests-only-0123456789"
 process.env.GOOGLE_GENAI_API_KEY = "test-key"
 process.env.CLIENT_URL = "http://localhost:5173"
 process.env.NODE_ENV = "test"
-process.env.PREVIEW_PER_IP_PER_HOUR = "3"
+process.env.LOGIN_FAILURES_PER_15_MIN = "5"
+process.env.REGISTER_PER_IP_PER_HOUR = "1000"
 process.env.GENERATE_PER_USER_PER_HOUR = "8"
 
 /**

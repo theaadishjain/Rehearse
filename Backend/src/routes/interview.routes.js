@@ -3,21 +3,10 @@ const authMiddleware = require("../middlewares/auth.middleware")
 const interviewController = require("../controllers/interview.controller")
 const upload = require("../middlewares/file.middleware")
 const { validateBody, validateObjectIdParam } = require("../middlewares/validate.middleware")
-const { generateReportSchema, previewSchema } = require("../validators/interview.validator")
-const { previewPerIp, previewPerDay, generatePerUser } = require("../middlewares/rateLimit.middleware")
+const { generateReportSchema } = require("../validators/interview.validator")
+const { generatePerUser } = require("../middlewares/rateLimit.middleware")
 
 const interviewRouter = express.Router()
-
-/**
- * @route POST /api/interview/preview
- * @description three sample questions for a job description, for visitors who haven't signed up.
- * @access public, rate limited per IP and per day
- */
-interviewRouter.post("/preview",
-    previewPerIp,
-    previewPerDay,
-    validateBody(previewSchema),
-    interviewController.previewInterviewController)
 
 /**
  * @route POST /api/interview/

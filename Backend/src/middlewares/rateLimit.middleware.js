@@ -2,38 +2,44 @@ const { rateLimit } = require("express-rate-limit")
 const config = require("../config/env")
 
 /*
- * Every AI call costs money, so the expensive routes are rate limited.
- * Counts live in memory: they reset when the server restarts and are not shared between
- * several server processes. Use a shared store (e.g. Redis) if you run more than one.
+ * Every AI call costs money, and login is a target for password guessing, so these routes
+ * are rate limited. Counts live in memory: they reset when the server restarts and are not
+ * shared between several server processes. Use a shared store (e.g. Redis) if you run more than one.
  */
 
-const HOUR = 60 * 60 * 1000
-const DAY = 24 * HOUR
+const MINUTE = 60 * 1000
+const HOUR = 60 * MINUTE
 
-function limiter({ windowMs, limit, message, keyGenerator }) {
+function limiter({ windowMs, limit, message, keyGenerator, skipSuccessfulRequests = false }) {
     return rateLimit({
         windowMs,
         limit,
         standardHeaders: "draft-7",
         legacyHeaders: false,
+        skipSuccessfulRequests,
         message: { message },
         ...(keyGenerator ? { keyGenerator } : {})
     })
 }
 
-/** Visitors trying the public preview: a few tries per IP per hour. */
-const previewPerIp = limiter({
-    windowMs: HOUR,
-    limit: config.previewPerIpPerHour,
-    message: "You've tried the preview a few times. Create an account to keep going, or try again in an hour."
+/**
+ * Failed logins, counted per IP and email together: slows down password guessing on an
+ * account without one person's typos locking out everyone else on the same network.
+ * Successful logins don't count.
+ */
+const loginAttempts = limiter({
+    windowMs: 15 * MINUTE,
+    limit: config.loginFailuresPer15Min,
+    skipSuccessfulRequests: true,
+    keyGenerator: (req) => `${req.ip}:${String(req.body?.email || "").trim().toLowerCase()}`,
+    message: "Too many failed login attempts. Please wait 15 minutes and try again."
 })
 
-/** A ceiling on all public previews per day, so a flood of visitors can't run up the bill. */
-const previewPerDay = limiter({
-    windowMs: DAY,
-    limit: config.previewPerDay,
-    keyGenerator: () => "all-visitors",
-    message: "The preview is very busy today. Create an account to make a full plan."
+/** New accounts per IP, so nobody can create accounts in bulk to get around the per-user AI limit. */
+const registerPerIp = limiter({
+    windowMs: HOUR,
+    limit: config.registerPerIpPerHour,
+    message: "Too many accounts created from this network. Please try again in an hour."
 })
 
 /** Logged-in users generating reports and resume PDFs. */
@@ -44,4 +50,4 @@ const generatePerUser = limiter({
     message: "You've generated a lot in the last hour. Please wait a little before trying again."
 })
 
-module.exports = { previewPerIp, previewPerDay, generatePerUser }
+module.exports = { loginAttempts, registerPerIp, generatePerUser }

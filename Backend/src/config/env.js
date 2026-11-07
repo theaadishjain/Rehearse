@@ -30,12 +30,15 @@ function loadConfig(env = process.env) {
         clientUrl: env.CLIENT_URL || "http://localhost:5173",
         pdfConcurrency: Math.max(1, Number(env.PDF_CONCURRENCY) || 2),
         // Rate limits (each counts requests in memory, per server process)
-        previewPerIpPerHour: Number(env.PREVIEW_PER_IP_PER_HOUR) || 3,
-        previewPerDay: Number(env.PREVIEW_PER_DAY) || 200,
+        loginFailuresPer15Min: Number(env.LOGIN_FAILURES_PER_15_MIN) || 5,
+        registerPerIpPerHour: Number(env.REGISTER_PER_IP_PER_HOUR) || 5,
         generatePerUserPerHour: Number(env.GENERATE_PER_USER_PER_HOUR) || 10,
         // Number of proxies in front of the app (e.g. 1 behind a load balancer) so the
         // per-IP limit sees the visitor's real IP. Leave unset when running directly.
         trustProxy: Number(env.TRUST_PROXY) || false,
+        // Set to "true" when the frontend and backend are on different domains (e.g. two
+        // hosting providers). The login cookie is then sent cross-site, which requires HTTPS.
+        crossSiteCookie: env.CROSS_SITE_COOKIE === "true",
     })
 }
 

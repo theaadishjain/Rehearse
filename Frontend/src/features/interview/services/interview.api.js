@@ -52,11 +52,3 @@ export const generateResumePdf = async ({ interviewReportId }) => {
 
     return response.data
 }
-
-/**
- * @description Public preview (no account): the job title and three likely questions.
- */
-export const previewInterview = async ({ jobDescription, selfDescription }) => {
-    const response = await api.post("/api/interview/preview", { jobDescription, selfDescription })
-    return response.data
-}

@@ -27,7 +27,6 @@ stub.filename = aiServicePath
 stub.loaded = true
 stub.exports = {
     generateInterviewReport: async (input) => { aiCalls.push(input); return structuredClone(fakeReport) },
-    generateInterviewPreview: async () => ({ title: "Backend Engineer", questions: fakeReport.technicalQuestions.concat(fakeReport.behavioralQuestions) }),
     generateResumePdf: async () => Buffer.from("%PDF-1.4 stub")
 }
 require.cache[ aiServicePath ] = stub
@@ -138,7 +137,7 @@ describe("auth: cookie and session handling (problem 2)", () => {
             .send({ email: "logoutuser@example.com", password: "correct-horse-1" })
         const token = login.headers[ "set-cookie" ][ 0 ].match(/token=([^;]+)/)[ 1 ]
 
-        const out = await request(app).get("/api/auth/logout").set("Cookie", `token=${token}`)
+        const out = await request(app).post("/api/auth/logout").set("Cookie", `token=${token}`)
         assert.equal(out.status, 200)
         assert.match(out.headers[ "set-cookie" ][ 0 ], /token=;/)
 
@@ -267,30 +266,33 @@ describe("interview reports: ownership (problem 1)", () => {
     })
 })
 
-describe("public preview and rate limits", () => {
-    test("the preview needs no account, validates input and stores nothing", async () => {
-        const before = await interviewReportModel.countDocuments()
-
-        const bad = await request(app).post("/api/interview/preview").send({ jobDescription: "too short" })
-        assert.equal(bad.status, 400)
-
-        const ok = await request(app).post("/api/interview/preview").send({ jobDescription: JOB })
-        assert.equal(ok.status, 200, ok.text)
-        assert.equal(ok.body.preview.title, "Backend Engineer")
-        assert.ok(ok.body.preview.questions.length >= 1)
-
-        assert.equal(await interviewReportModel.countDocuments(), before)
+describe("rate limits", () => {
+    test("the old public preview endpoint is gone", async () => {
+        const res = await request(app).post("/api/interview/preview").send({ jobDescription: JOB })
+        assert.equal(res.status, 404)
     })
 
-    test("the preview is limited per IP (3 per hour in tests)", async () => {
-        // Two requests were used by the previous test.
-        const third = await request(app).post("/api/interview/preview").send({ jobDescription: JOB })
-        assert.equal(third.status, 200)
+    test("logout only accepts POST", async () => {
+        const res = await request(app).get("/api/auth/logout")
+        assert.equal(res.status, 404)
+    })
 
-        const fourth = await request(app).post("/api/interview/preview").send({ jobDescription: JOB })
-        assert.equal(fourth.status, 429)
-        assert.match(fourth.body.message, /Create an account/)
-        assert.ok(fourth.headers[ "ratelimit" ] || fourth.headers[ "ratelimit-policy" ])
+    test("failed logins are limited per IP and email (5 per 15 minutes in tests)", async () => {
+        await registeredAgent("guessme")
+        const attempt = (email, password) => request(app).post("/api/auth/login").send({ email, password })
+
+        for (let i = 0; i < 5; i++) {
+            const res = await attempt("guessme@example.com", `wrong-password-${i}`)
+            assert.equal(res.status, 401, `attempt ${i + 1}: ${res.text}`)
+        }
+        const blocked = await attempt("guessme@example.com", "correct-horse-1")
+        assert.equal(blocked.status, 429)
+        assert.match(blocked.body.message, /Too many failed login attempts/)
+
+        // Another account from the same IP is unaffected
+        await registeredAgent("innocent")
+        const other = await attempt("innocent@example.com", "correct-horse-1")
+        assert.equal(other.status, 200, other.text)
     })
 
     test("logged-in users are limited when generating (8 per hour in tests)", async () => {

@@ -12,13 +12,4 @@ const generateReportSchema = z.object({
         .default("")
 })
 
-const previewSchema = z.object({
-    jobDescription: generateReportSchema.shape.jobDescription,
-    selfDescription: z.string()
-        .trim()
-        .max(1000, "Keep the description of yourself under 1000 characters.")
-        .optional()
-        .default("")
-})
-
-module.exports = { generateReportSchema, previewSchema }
+module.exports = { generateReportSchema }
