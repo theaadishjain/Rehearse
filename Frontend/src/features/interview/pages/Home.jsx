@@ -122,6 +122,7 @@ const Home = () => {
                             onDrop={handleDrop}
                         >
                             <span className='dropzone__title'>{dragging ? 'Drop it here' : 'Drop your resume here, or click to choose'}</span>
+                            <span className='dropzone__touch'>Tap to choose your resume</span>
                             <span className='mono-label'>PDF &middot; up to 3MB</span>
                         </label>
                     )}
@@ -151,7 +152,7 @@ const Home = () => {
                 </div>
             </form>
 
-            <aside className='plans'>
+            <aside className={`plans ${reports.length > 0 ? 'has-plans' : ''}`}>
                 <h2 className='mono-label'>Your plans</h2>
                 {reports.length === 0 ? (
                     <p className='plans__empty'>

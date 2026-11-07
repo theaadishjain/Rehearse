@@ -102,6 +102,14 @@
         font-size: 0.98rem;
     }
 
+    // Phones and tablets can't drag files in, so ask them to tap instead
+    &__touch { display: none; }
+
+    @media (hover: none) and (pointer: coarse) {
+        &__title { display: none; }
+        &__touch { display: block; font-size: 0.98rem; }
+    }
+
     &:hover,
     &.is-dragging {
         border-color: $accent;
@@ -175,11 +183,14 @@
         text-decoration: none;
         transition: padding-left 0.25s ease;
 
-        &:hover {
-            padding-left: 0.6rem;
+        // Only on devices with a mouse: on touch screens the hover state sticks after a tap
+        @media (hover: hover) {
+            &:hover {
+                padding-left: 0.6rem;
 
-            .plans__title {
-                color: $accent;
+                .plans__title {
+                    color: $accent;
+                }
             }
         }
     }
@@ -213,5 +224,27 @@
 
     .plans {
         position: static;
+    }
+
+    // Returning users see their saved plans first instead of below the whole form
+    .plans.has-plans {
+        order: -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .workspace {
+        gap: 3rem;
+        padding-top: 2rem;
+        padding-bottom: 4rem;
+    }
+
+    .compose {
+        gap: 2.25rem;
+    }
+
+    // Ten rows is most of a phone screen
+    #jobDescription {
+        height: 14rem;
     }
 }
