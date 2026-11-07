@@ -1,21 +1,109 @@
 @use "../../style/theme" as *;
 
+// Landing-only surface tokens. The app pages (login, workspace) keep the paper theme.
+$canvas:      #fbfaf7;
+$surface:     #ffffff;
+$line:        #ece6da;
+$line-strong: #ddd5c6;
+$band:        #f4efe6;
+$shadow-sm:   0 1px 2px #1c1b180a, 0 2px 8px -2px #1c1b180d;
+$shadow-lg:   0 1px 2px #1c1b180a, 0 24px 48px -20px #1c1b182e;
+$radius:      18px;
+
 html {
     scroll-behavior: smooth;
 }
 
-.landing h2 {
-    font-size: clamp(1.75rem, 3.4vw, 2.5rem);
-    font-weight: 700;
-    line-height: 1.15;
-    letter-spacing: -0.02em;
+// The global paper grain stays on the app pages but not here.
+body:has(.landing) {
+    background-color: $canvas;
+
+    &::before {
+        display: none;
+    }
 }
 
+.landing {
+    position: relative;
+    min-height: 100vh;
+    background-color: $canvas;
+    overflow-x: clip;
+
+    h2 {
+        font-size: clamp(1.75rem, 3.4vw, 2.6rem);
+        font-weight: 800;
+        line-height: 1.12;
+        letter-spacing: -0.03em;
+
+        em {
+            color: $accent;
+        }
+    }
+
+    main {
+        position: relative;
+    }
+
+    // ── Decorative backdrop behind the hero ──
+    &__backdrop {
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 980px;
+        pointer-events: none;
+        overflow: hidden;
+    }
+
+    &__glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+
+        &--warm {
+            top: -220px;
+            right: -140px;
+            width: 720px;
+            height: 620px;
+            background: radial-gradient(closest-side, #f3b089 0%, #f6cdb1 45%, transparent 100%);
+            opacity: 0.55;
+        }
+
+        &--cool {
+            top: 160px;
+            left: -260px;
+            width: 640px;
+            height: 520px;
+            background: radial-gradient(closest-side, #c9dccd 0%, #dfe9e0 50%, transparent 100%);
+            opacity: 0.6;
+        }
+    }
+
+    &__grid {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(#1c1b1824 1px, transparent 1px);
+        background-size: 22px 22px;
+        mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%);
+        -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 80%);
+    }
+}
+
+// ── Nav ──────────────────────────────────────────────────────────────────────
 .landing-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 4.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background-color: #fbfaf7b3;
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s;
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 4.25rem;
+    }
 
     nav {
         display: flex;
@@ -24,21 +112,81 @@ html {
     }
 }
 
+// Shows a hairline once the page has scrolled under the nav (where supported).
+@supports (animation-timeline: scroll()) {
+    .landing-nav {
+        animation: nav-line linear both;
+        animation-timeline: scroll();
+        animation-range: 0 80px;
+    }
+
+    @keyframes nav-line {
+        to { border-bottom-color: $line; }
+    }
+}
+
+// ── Shared bits ──────────────────────────────────────────────────────────────
+.eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.4rem 0.85rem 0.4rem 0.7rem;
+    background-color: #ffffffb3;
+    border: 1px solid $line-strong;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: $ink-soft;
+    box-shadow: $shadow-sm;
+
+    &__dot {
+        width: 0.45rem;
+        height: 0.45rem;
+        border-radius: 50%;
+        background-color: $accent;
+        box-shadow: 0 0 0 4px $accent-wash;
+    }
+}
+
+.section-head {
+    max-width: 42rem;
+
+    h2 {
+        margin: 0.75rem 0 1rem;
+    }
+
+    p:not(.mono-label) {
+        color: $ink-soft;
+        font-size: 1.05rem;
+        line-height: 1.65;
+    }
+
+    &--center {
+        margin-inline: auto;
+        text-align: center;
+    }
+}
+
+.landing .mono-label {
+    letter-spacing: 0.02em;
+}
+
 // ── Hero ─────────────────────────────────────────────────────────────────────
 .hero {
+    position: relative;
     display: grid;
     grid-template-columns: 1.1fr 1fr;
     gap: 4rem;
     align-items: center;
-    padding-top: 2rem;
-    padding-bottom: 5rem;
+    padding-top: 3.5rem;
+    padding-bottom: 4.5rem;
 
     h1 {
-        margin: 1rem 0 1.25rem;
-        font-size: clamp(2.4rem, 4.4vw, 3.6rem);
+        margin: 1.4rem 0 1.25rem;
+        font-size: clamp(2.5rem, 4.8vw, 3.9rem);
         font-weight: 800;
-        line-height: 1.08;
-        letter-spacing: -0.03em;
+        line-height: 1.05;
+        letter-spacing: -0.035em;
     }
 
     &__em {
@@ -61,8 +209,8 @@ html {
 
     &__lede {
         max-width: 32rem;
-        font-size: 1.08rem;
-        line-height: 1.6;
+        font-size: 1.1rem;
+        line-height: 1.65;
         color: $ink-soft;
     }
 
@@ -71,7 +219,11 @@ html {
         flex-wrap: wrap;
         align-items: center;
         gap: 1.25rem;
-        margin-top: 2rem;
+        margin-top: 2.25rem;
+
+        .button.primary-button {
+            box-shadow: 0 10px 24px -10px #1c1b1880;
+        }
     }
 }
 
@@ -87,30 +239,33 @@ html {
 
     &__roles {
         display: flex;
-        gap: 0.4rem;
+        gap: 0.25rem;
         align-self: flex-end;
+        padding: 0.25rem;
+        background-color: #ffffffb3;
+        border: 1px solid $line;
+        border-radius: 999px;
+        box-shadow: $shadow-sm;
     }
 
     &__role {
-        padding: 0.4rem 0.85rem;
+        padding: 0.4rem 0.9rem;
         background: none;
-        border: 1px solid $rule;
+        border: none;
         border-radius: 999px;
         font-family: $sans;
         font-size: 0.8rem;
         font-weight: 600;
         color: $ink-soft;
         cursor: pointer;
-        transition: border-color 0.2s, color 0.2s, background-color 0.2s;
+        transition: color 0.2s, background-color 0.2s;
 
         &:hover {
-            border-color: $ink;
             color: $ink;
         }
 
         &.is-active {
             background-color: $ink;
-            border-color: $ink;
             color: $paper;
         }
     }
@@ -118,27 +273,31 @@ html {
 
 .specimen {
     position: relative;
-    padding: 1.9rem 1.9rem 1.5rem;
-    background-color: $paper-raised;
-    border: 1px solid $rule;
+    padding: 2rem 1.9rem 1.5rem;
+    background-color: $surface;
+    border: 1px solid $line;
+    border-radius: $radius;
     transform: rotate(1deg);
-    box-shadow:
-        0 1px 0 $rule,
-        0 22px 40px -24px #1c1b1840;
+    box-shadow: $shadow-lg;
     animation: card-in 0.4s ease both;
-    transition: transform 0.4s ease;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
 
     &:hover {
-        transform: rotate(0deg) translateY(-3px);
+        transform: rotate(0deg) translateY(-4px);
+        box-shadow: 0 1px 2px #1c1b180a, 0 32px 60px -24px #1c1b1838;
     }
 
     &__tag {
         position: absolute;
-        top: -0.7rem;
+        top: -0.75rem;
         left: 1.5rem;
-        padding: 0.1rem 0.55rem;
-        background-color: $paper;
-        border: 1px solid $rule;
+        padding: 0.15rem 0.65rem;
+        background-color: $accent;
+        border-radius: 999px;
+
+        &.mono-label {
+            color: white;
+        }
     }
 
     &__head {
@@ -147,7 +306,7 @@ html {
         align-items: flex-end;
         gap: 1rem;
         padding-bottom: 1.1rem;
-        border-bottom: 1px solid $rule;
+        border-bottom: 1px solid $line;
     }
 
     &__role {
@@ -174,7 +333,7 @@ html {
 
     &__question {
         padding: 1.1rem 0;
-        border-bottom: 1px solid $rule;
+        border-bottom: 1px solid $line;
 
         dl {
             display: grid;
@@ -222,246 +381,121 @@ html {
     from { opacity: 0; transform: rotate(1deg) translateY(6px); }
 }
 
-// ── Try it ───────────────────────────────────────────────────────────────────
-.try {
-    display: grid;
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-    gap: 4rem;
-    padding-top: 4.5rem;
+// ── How it works ─────────────────────────────────────────────────────────────
+.steps {
+    position: relative;
     padding-bottom: 5rem;
-    border-top: 1px solid $rule;
-    scroll-margin-top: 1rem;
-
-    &__intro {
-        h2 {
-            margin: 0.75rem 0 1rem;
-        }
-
-        p:not(.mono-label) {
-            color: $ink-soft;
-            line-height: 1.6;
-        }
-    }
-
-    &__form {
-        display: flex;
-        flex-direction: column;
-        gap: 0.6rem;
-
-        textarea + label {
-            margin-top: 0.75rem;
-        }
-
-        .error-message {
-            margin-top: 0.5rem;
-        }
-    }
-
-    &__optional {
-        font-weight: 400;
-        color: $ink-faint;
-    }
-
-    &__submit {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 1.25rem;
-        margin-top: 1rem;
-    }
-
-    &__note {
-        font-size: 0.85rem;
-        color: $ink-faint;
-    }
-
-    &__result {
-        animation: card-in 0.4s ease both;
-    }
-
-    &__role {
-        margin-top: 0.3rem;
-        font-size: 1.5rem;
-        font-weight: 700;
-        letter-spacing: -0.02em;
-    }
-
-    &__questions {
-        list-style: none;
-        margin-top: 1rem;
-        border-top: 1px solid $ink;
-    }
-
-    &__next {
-        display: grid;
-        gap: 1.25rem;
-        margin-top: 2rem;
-        padding: 1.5rem;
-        background-color: $ink;
-        color: $paper;
-
-        h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        p {
-            margin-top: 0.5rem;
-            color: #cfc9bb;
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-
-        .button.primary-button {
-            background-color: $accent;
-            border-color: $accent;
-            color: white;
-
-            &:hover {
-                background-color: $paper;
-                border-color: $paper;
-                color: $ink;
-            }
-        }
-
-        .try__note {
-            color: #a8a294;
-        }
-
-        .text-link {
-            color: $paper;
-            font-size: inherit;
-        }
-    }
-
-    &__next-actions {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 1rem 1.25rem;
-    }
-
-    &__again {
-        margin-top: 1.25rem;
-    }
-}
-
-.try-q {
-    border-bottom: 1px solid $rule;
-
-    &__toggle {
-        display: grid;
-        grid-template-columns: 2rem minmax(0, 1fr) 1.25rem;
-        gap: 0.75rem;
-        align-items: baseline;
-        width: 100%;
-        padding: 1.1rem 0;
-        background: none;
-        border: none;
-        color: $ink;
-        font-family: $sans;
-        text-align: left;
-        cursor: pointer;
-
-        &:hover .try-q__text {
-            color: $accent;
-        }
-    }
-
-    &__num {
-        font-size: 0.8rem;
-        font-variant-numeric: tabular-nums;
-        color: $ink-faint;
-    }
-
-    &__text {
-        font-size: 1.02rem;
-        font-weight: 700;
-        line-height: 1.4;
-        transition: color 0.2s;
-    }
-
-    &__icon {
-        color: $ink-soft;
-        text-align: right;
-    }
-
-    &__body {
-        display: grid;
-        grid-template-columns: 1fr 1.3fr;
-        gap: 1.5rem;
-        padding: 0 0 1.25rem 2.75rem;
-
-        p:not(.mono-label) {
-            margin-top: 0.35rem;
-            font-size: 0.92rem;
-            line-height: 1.6;
-            color: $ink-soft;
-        }
-    }
-}
-
-// ── Why not ChatGPT ──────────────────────────────────────────────────────────
-.compare {
-    padding-top: 4.5rem;
-    padding-bottom: 5rem;
-    border-top: 1px solid $rule;
-
-    &__intro {
-        max-width: 40rem;
-
-        h2 {
-            margin: 0.75rem 0 1rem;
-        }
-
-        p:not(.mono-label) {
-            color: $ink-soft;
-            line-height: 1.6;
-        }
-    }
 
     &__list {
         list-style: none;
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem 3rem;
-        margin-top: 3rem;
+        background-color: #ffffffcc;
+        border: 1px solid $line;
+        border-radius: $radius;
+        box-shadow: $shadow-sm;
+        overflow: hidden;
+    }
+
+    &__item {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem 1.6rem;
+
+        & + & {
+            border-left: 1px solid $line;
+        }
 
         h3 {
-            margin: 0.6rem 0 0.4rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
         }
 
         p {
-            font-size: 0.95rem;
+            margin-top: 0.25rem;
+            font-size: 0.9rem;
+            line-height: 1.55;
+            color: $ink-soft;
+        }
+    }
+
+    &__num {
+        flex-shrink: 0;
+        font-size: 0.85rem;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        color: $accent;
+        line-height: 1.5;
+    }
+}
+
+// ── Why not ChatGPT ──────────────────────────────────────────────────────────
+// Heading on the left, a plain numbered list on the right.
+.compare {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 5rem;
+    align-items: start;
+    padding-top: 2rem;
+    padding-bottom: 6rem;
+
+    &__head {
+        position: sticky;
+        top: 6.5rem;
+    }
+
+    &__list {
+        list-style: none;
+        border-top: 1px solid $ink;
+    }
+
+    &__item {
+        display: grid;
+        grid-template-columns: 2.75rem minmax(0, 1fr);
+        column-gap: 0.5rem;
+        padding: 1.35rem 0;
+        border-bottom: 1px solid $line-strong;
+
+        h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.35;
+        }
+
+        p {
+            grid-column: 2;
+            margin-top: 0.3rem;
+            font-size: 0.98rem;
             line-height: 1.6;
             color: $ink-soft;
         }
     }
 
     &__num {
-        display: inline-grid;
-        place-items: center;
-        width: 1.9rem;
-        height: 1.9rem;
-        border: 1px solid $accent;
-        border-radius: 50%;
         font-size: 0.85rem;
         font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        line-height: 1.6rem;
         color: $accent;
     }
 }
 
 // ── Resume before / after ────────────────────────────────────────────────────
+.band {
+    background:
+        radial-gradient(ellipse 60% 80% at 100% 0%, #f6d9c6 0%, transparent 60%),
+        $band;
+    border-block: 1px solid $line;
+}
+
 .rewrite {
     display: grid;
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: 4rem;
     align-items: center;
-    padding-top: 4.5rem;
-    padding-bottom: 5rem;
-    border-top: 1px solid $rule;
+    padding-top: 5.5rem;
+    padding-bottom: 5.5rem;
 
     &__intro {
         h2 {
@@ -470,7 +504,8 @@ html {
 
         p:not(.mono-label) {
             color: $ink-soft;
-            line-height: 1.6;
+            font-size: 1.05rem;
+            line-height: 1.65;
         }
     }
 
@@ -483,13 +518,15 @@ html {
 
     &__card {
         height: 100%;
-        padding: 1.25rem;
+        padding: 1.4rem;
+        background-color: #ffffff80;
         border: 1px dashed $ink-faint;
+        border-radius: 14px;
 
         &--after {
-            background-color: $paper-raised;
+            background-color: $surface;
             border: 1px solid $ink;
-            box-shadow: 4px 4px 0 0 $ink;
+            box-shadow: 5px 5px 0 0 $ink;
         }
     }
 
@@ -504,39 +541,53 @@ html {
     }
 
     &__arrow {
-        font-size: 1.5rem;
+        display: inline-grid;
+        place-items: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        background-color: $surface;
+        border: 1px solid $line-strong;
+        border-radius: 50%;
+        font-size: 1.1rem;
         color: $accent;
+        box-shadow: $shadow-sm;
     }
 }
 
 // ── FAQ ──────────────────────────────────────────────────────────────────────
 .faq {
-    padding-top: 4.5rem;
+    padding-top: 6rem;
     padding-bottom: 5rem;
-    border-top: 1px solid $rule;
-
-    h2 {
-        margin-top: 0.75rem;
-    }
 
     &__list {
+        display: grid;
+        gap: 0.75rem;
         max-width: 48rem;
-        margin-top: 2rem;
-        border-top: 1px solid $ink;
+        margin: 2.5rem auto 0;
     }
 
     &__item {
-        border-bottom: 1px solid $rule;
+        background-color: $surface;
+        border: 1px solid $line;
+        border-radius: 14px;
+        box-shadow: $shadow-sm;
+        transition: border-color 0.2s;
+
+        &[open] {
+            border-color: $line-strong;
+        }
 
         summary {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             gap: 1rem;
-            padding: 1.15rem 0;
-            font-size: 1.05rem;
+            padding: 1.15rem 1.4rem;
+            font-size: 1.02rem;
             font-weight: 700;
             cursor: pointer;
             list-style: none;
+            transition: color 0.2s;
 
             &::-webkit-details-marker {
                 display: none;
@@ -544,7 +595,14 @@ html {
 
             &::after {
                 content: "+";
-                font-weight: 400;
+                flex-shrink: 0;
+                display: inline-grid;
+                place-items: center;
+                width: 1.6rem;
+                height: 1.6rem;
+                border-radius: 50%;
+                background-color: $band;
+                font-weight: 500;
                 color: $ink-soft;
             }
 
@@ -555,11 +613,12 @@ html {
 
         &[open] summary::after {
             content: "\2212";
+            background-color: $accent-wash;
+            color: $accent;
         }
 
         p {
-            max-width: 40rem;
-            padding-bottom: 1.25rem;
+            padding: 0 1.4rem 1.3rem;
             line-height: 1.65;
             color: $ink-soft;
         }
@@ -568,13 +627,20 @@ html {
 
 // ── Closing ──────────────────────────────────────────────────────────────────
 .closing {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2rem;
-    padding-top: 5rem;
-    padding-bottom: 5.5rem;
-    border-top: 1px solid $rule;
+    margin-bottom: 4rem;
+    padding: 4.5rem 1.5rem;
+    background:
+        radial-gradient(ellipse 50% 70% at 15% 0%, #f6d9c6 0%, transparent 70%),
+        radial-gradient(ellipse 50% 70% at 85% 100%, #d9e6db 0%, transparent 70%),
+        $surface;
+    border: 1px solid $line;
+    border-radius: 28px;
+    box-shadow: $shadow-sm;
     text-align: center;
 
     &__line {
@@ -597,25 +663,19 @@ html {
     gap: 1rem;
     padding-top: 2rem;
     padding-bottom: 2.5rem;
-    border-top: 1px solid $rule;
-
-    p {
-        font-size: 0.8rem;
-        color: $ink-faint;
-    }
+    border-top: 1px solid $line;
 }
 
 // ── Small screens ────────────────────────────────────────────────────────────
 @media (max-width: 900px) {
     .hero,
-    .try,
     .rewrite {
         grid-template-columns: 1fr;
         gap: 2.5rem;
     }
 
     .hero {
-        padding-top: 1rem;
+        padding-top: 2rem;
         padding-bottom: 3.5rem;
     }
 
@@ -627,17 +687,32 @@ html {
         transform: rotate(0.5deg);
     }
 
-    .compare__list {
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
+    .steps__list {
+        grid-template-columns: 1fr;
     }
 
-    .try,
-    .compare,
+    .steps__item + .steps__item {
+        border-left: none;
+        border-top: 1px solid $line;
+    }
+
+    .compare {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+    }
+
+    .compare__head {
+        position: static;
+    }
+
     .rewrite,
     .faq {
-        padding-top: 3.5rem;
-        padding-bottom: 3.5rem;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+
+    .compare {
+        padding-bottom: 4rem;
     }
 }
 
@@ -647,11 +722,7 @@ html {
     }
 
     .specimen {
-        padding: 1.6rem 1.15rem 1.15rem;
-    }
-
-    .compare__list {
-        grid-template-columns: 1fr;
+        padding: 1.75rem 1.15rem 1.15rem;
     }
 
     .rewrite__compare {
@@ -663,8 +734,8 @@ html {
         }
     }
 
-    .try-q__body {
-        grid-template-columns: 1fr;
-        padding-left: 0;
+    .closing {
+        padding: 3rem 1.25rem;
+        border-radius: 20px;
     }
 }

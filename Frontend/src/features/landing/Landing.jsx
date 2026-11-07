@@ -11,13 +11,19 @@ const Scribble = () => (
     </svg>
 )
 
+const STEPS = [
+    { title: "Paste the job", text: "Copy the full job description from the posting." },
+    { title: "Add your experience", text: "Upload your resume as a PDF, or write a few lines about yourself." },
+    { title: "Get your plan", text: "Questions, skill gaps, a day-by-day plan and a tailored resume." },
+]
+
 const DIFFERENCES = [
-    { title: "Built around one posting", text: "Every question comes from the job you paste and the experience you have, not a generic list." },
-    { title: "Why each question is asked", text: "You see what the interviewer is really testing, so you can answer the question behind the question." },
-    { title: "Gaps, ranked", text: "The skills you're missing, marked high, medium or low, so you know where an evening of study pays off most." },
-    { title: "A plan, day by day", text: "What to practise on each day before the interview, instead of a wall of advice." },
-    { title: "A resume for this job", text: "Your resume rewritten to match the posting, downloaded as a PDF you can send." },
-    { title: "Kept for later", text: "Every plan is saved to your account. Come back the night before and pick up where you left off." },
+    { title: "Your match score", text: "See how well you fit the role, and what's pulling the score down." },
+    { title: "The questions they'll likely ask", text: "Technical and behavioural, each with what the interviewer is testing and how to answer." },
+    { title: "Your gaps, ranked", text: "Marked high, medium or low, so you spend your evenings where it counts." },
+    { title: "A day-by-day plan", text: "What to practise each day until the interview." },
+    { title: "A resume for this job", text: "Rewritten around the posting, ready to download as a PDF." },
+    { title: "Saved for later", text: "Come back the night before and pick up where you left off." },
 ]
 
 const FAQ = [
@@ -45,19 +51,27 @@ const FAQ = [
 
 const Landing = () => (
     <div className='landing'>
-        <header className='container landing-nav'>
-            <Link to='/' className='wordmark'>Rehearse<span>.</span></Link>
-            <nav>
-                <Link to='/login' className='text-link'>Log in</Link>
-                <Link to='/register' className='button primary-button small'>Get started</Link>
-            </nav>
+        <div className='landing__backdrop' aria-hidden='true'>
+            <span className='landing__glow landing__glow--warm' />
+            <span className='landing__glow landing__glow--cool' />
+            <span className='landing__grid' />
+        </div>
+
+        <header className='landing-nav'>
+            <div className='container landing-nav__inner'>
+                <Link to='/' className='wordmark'>Rehearse<span>.</span></Link>
+                <nav>
+                    <Link to='/login' className='text-link'>Log in</Link>
+                    <Link to='/register' className='button primary-button small'>Get started</Link>
+                </nav>
+            </div>
         </header>
 
         <main>
             {/* ── Hero ── */}
             <section className='container hero'>
                 <div className='hero__copy'>
-                    <p className='mono-label'>Interview prep for one specific job</p>
+                    <p className='eyebrow'><span className='eyebrow__dot' />Interview prep for one specific job</p>
                     <h1>
                         Know the questions <em className='hero__em'>before<Scribble /></em> they're asked.
                     </h1>
@@ -74,52 +88,71 @@ const Landing = () => (
                 <ExampleCard />
             </section>
 
-            {/* ── Why not a chatbot ── */}
+            {/* ── How it works ── */}
+            <section className='container steps' aria-label='How it works'>
+                <ol className='steps__list'>
+                    {STEPS.map((s, i) => (
+                        <li key={s.title} className='steps__item'>
+                            <span className='steps__num'>{String(i + 1).padStart(2, '0')}</span>
+                            <div>
+                                <h3>{s.title}</h3>
+                                <p>{s.text}</p>
+                            </div>
+                        </li>
+                    ))}
+                </ol>
+            </section>
+
+            {/* ── What you get ── */}
             <section className='container compare'>
-                <div className='compare__intro'>
-                    <p className='mono-label'>Why not just ask ChatGPT?</p>
-                    <h2>You could. You'd have to know what to ask for.</h2>
-                    <p>A chat gives you a long reply that's gone when you close the tab. Rehearse turns one job posting into a plan you can work through and come back to.</p>
+                <div className='section-head compare__head'>
+                    <p className='mono-label'>What you get</p>
+                    <h2>One job posting in.<br /><em>A complete prep plan out.</em></h2>
+                    <p>No prompts to write, no wall of text to scroll through. Paste the posting and get a plan built for that one interview.</p>
                 </div>
-                <ul className='compare__list'>
+                <ol className='compare__list'>
                     {DIFFERENCES.map((d, i) => (
-                        <li key={d.title}>
-                            <span className='compare__num'>{i + 1}</span>
+                        <li key={d.title} className='compare__item'>
+                            <span className='compare__num'>{String(i + 1).padStart(2, '0')}</span>
                             <h3>{d.title}</h3>
                             <p>{d.text}</p>
                         </li>
                     ))}
-                </ul>
+                </ol>
             </section>
 
             {/* ── Resume, rewritten ── */}
-            <section className='container rewrite'>
-                <div className='rewrite__intro'>
-                    <p className='mono-label'>Your resume, rewritten for the job</p>
-                    <h2>Same experience. Told for this role.</h2>
-                    <p>
-                        Rehearse rewrites your resume around what the posting asks for and gives it back as a PDF.
-                        It works from what's already in your resume and is told not to invent employers, dates or
-                        numbers. Read it through before you send it.
-                    </p>
-                </div>
-                <div className='rewrite__compare' aria-label='Example of a resume line before and after'>
-                    <div className='rewrite__card'>
-                        <p className='mono-label'>Example: your resume says</p>
-                        <p className='rewrite__text'>Worked on the frontend of the company website. Fixed bugs and added new features.</p>
+            <div className='band'>
+                <section className='container rewrite'>
+                    <div className='rewrite__intro'>
+                        <p className='mono-label'>Your resume, rewritten for the job</p>
+                        <h2>Same experience. <em>Told for this role.</em></h2>
+                        <p>
+                            Rehearse rewrites your resume around what the posting asks for and gives it back as a PDF.
+                            It works from what's already in your resume and is told not to invent employers, dates or
+                            numbers. Read it through before you send it.
+                        </p>
                     </div>
-                    <span className='rewrite__arrow' aria-hidden='true'>&rarr;</span>
-                    <div className='rewrite__card rewrite__card--after'>
-                        <p className='mono-label'>Rewritten for a payments role</p>
-                        <p className='rewrite__text'>Built and maintained checkout and account pages in React, including form validation and keyboard-accessible error handling.</p>
+                    <div className='rewrite__compare' aria-label='Example of a resume line before and after'>
+                        <div className='rewrite__card'>
+                            <p className='mono-label'>Example: your resume says</p>
+                            <p className='rewrite__text'>Worked on the frontend of the company website. Fixed bugs and added new features.</p>
+                        </div>
+                        <span className='rewrite__arrow' aria-hidden='true'>&rarr;</span>
+                        <div className='rewrite__card rewrite__card--after'>
+                            <p className='mono-label'>Rewritten for a payments role</p>
+                            <p className='rewrite__text'>Built and maintained checkout and account pages in React, including form validation and keyboard-accessible error handling.</p>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            </div>
 
             {/* ── FAQ ── */}
             <section className='container faq'>
-                <p className='mono-label'>Questions</p>
-                <h2>Before you try it</h2>
+                <div className='section-head section-head--center'>
+                    <p className='mono-label'>Questions</p>
+                    <h2>Before you start</h2>
+                </div>
                 <div className='faq__list'>
                     {FAQ.map((item) => (
                         <details key={item.q} className='faq__item'>
@@ -131,12 +164,14 @@ const Landing = () => (
             </section>
 
             {/* ── Closing ── */}
-            <section className='container closing'>
-                <p className='closing__line'>
-                    You can't know every question.<br />
-                    <em>You can know the likely ones.</em>
-                </p>
-                <Link to='/register' className='button primary-button'>Try it with your next job <Arrow /></Link>
+            <section className='container'>
+                <div className='closing'>
+                    <p className='closing__line'>
+                        You can't know every question.<br />
+                        <em>You can know the likely ones.</em>
+                    </p>
+                    <Link to='/register' className='button primary-button'>Try it with your next job <Arrow /></Link>
+                </div>
             </section>
         </main>
 
