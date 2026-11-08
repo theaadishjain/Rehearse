@@ -1,0 +1,39 @@
+@use "../style/theme" as *;
+
+.server-waking {
+    position: fixed;
+    left: 50%;
+    bottom: 1.25rem;
+    z-index: 200; // above the paper grain overlay (z-index 100)
+    transform: translateX(-50%);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    width: max-content;
+    max-width: calc(100vw - 2rem);
+    padding: 0.75rem 1rem;
+    border: 1px solid $rule;
+    border-radius: 0.75rem;
+    background-color: $paper-raised;
+    color: $ink-soft;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    box-shadow: 0 6px 24px rgba($ink, 0.12);
+    animation: server-waking-in 0.25s ease-out;
+
+    strong {
+        color: $ink;
+        font-weight: 600;
+    }
+
+    .spinner--small {
+        flex-shrink: 0;
+        margin-top: 0.2rem;
+        color: $accent;
+    }
+}
+
+@keyframes server-waking-in {
+    from { opacity: 0; transform: translate(-50%, 0.5rem); }
+    to   { opacity: 1; transform: translate(-50%, 0); }
+}

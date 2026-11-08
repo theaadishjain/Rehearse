@@ -6,7 +6,7 @@ import { getErrorMessage } from "../../../lib/api";
 
 export const useAuth = () => {
 
-    const { user, setUser, loading } = useContext(AuthContext)
+    const { user, setUser, loading, waking } = useContext(AuthContext)
     const [ submitting, setSubmitting ] = useState(false)
     const [ error, setError ] = useState("")
 
@@ -53,5 +53,5 @@ export const useAuth = () => {
         }
     }
 
-    return { user, loading, submitting, error, handleRegister, handleLogin, handleLogout }
+    return { user, loading, waking, submitting, error, handleRegister, handleLogin, handleLogout }
 }

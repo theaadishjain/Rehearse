@@ -11,7 +11,7 @@ const Register = () => {
     const [ email, setEmail ] = useState("")
     const [ password, setPassword ] = useState("")
 
-    const { user, loading, submitting, error, handleRegister } = useAuth()
+    const { user, loading, waking, submitting, error, handleRegister } = useAuth()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -19,7 +19,8 @@ const Register = () => {
         if (ok) navigate("/")
     }
 
-    if (loading) return <Loader />
+    // While the server is starting up, show the form instead of a blank loader
+    if (loading && !waking) return <Loader />
     if (user) return <Navigate to='/' replace />
 
     return (

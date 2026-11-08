@@ -6,7 +6,7 @@ import Loader from '../../../components/Loader'
 
 const Login = () => {
 
-    const { user, loading, submitting, error, handleLogin } = useAuth()
+    const { user, loading, waking, submitting, error, handleLogin } = useAuth()
     const navigate = useNavigate()
 
     const [ email, setEmail ] = useState("")
@@ -18,7 +18,9 @@ const Login = () => {
         if (ok) navigate('/')
     }
 
-    if (loading) return <Loader />
+    // While the server is starting up, show the form instead of a blank loader. The login
+    // request waits for the server like any other.
+    if (loading && !waking) return <Loader />
     if (user) return <Navigate to='/' replace />
 
     return (
