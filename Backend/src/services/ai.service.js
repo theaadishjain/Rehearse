@@ -5,6 +5,7 @@ const config = require("../config/env")
 const AppError = require("../utils/AppError")
 const { htmlToPdf } = require("./pdf.service")
 const cleanReport = require("../utils/cleanReport")
+const { withRetry } = require("../utils/retry")
 
 const ai = new GoogleGenAI({
     apiKey: config.geminiApiKey
@@ -67,7 +68,9 @@ function candidateContext({ resume, selfDescription, jobDescription }) {
 async function generateStructured({ systemInstruction, prompt, schema }) {
     let response
     try {
-        response = await ai.models.generateContent({
+        // Gemini often answers 503 "high demand" or 429 during busy periods. Those usually
+        // clear within seconds, so retry a couple of times before showing the user an error.
+        response = await withRetry(() => ai.models.generateContent({
             model: config.geminiModel,
             contents: prompt,
             config: {
@@ -75,6 +78,9 @@ async function generateStructured({ systemInstruction, prompt, schema }) {
                 responseMimeType: "application/json",
                 responseSchema: zodToJsonSchema(schema),
             }
+        }), {
+            onRetry: (err, attempt, wait) =>
+                console.warn(`Gemini returned ${err.status}, retry ${attempt} in ${wait}ms`)
         })
     } catch (err) {
         console.error("Gemini request failed:", err)
